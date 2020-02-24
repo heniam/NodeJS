@@ -4,6 +4,8 @@ const assert = require('assert');
 const url = 'mongodb://localhost:27017/';
 const dbname = 'conFusion';
 
+const dboper = require('./operations');
+
 MongoClient.connect(url,(err, client) => {
 
   assert.equal(err, null);
@@ -11,30 +13,29 @@ MongoClient.connect(url,(err, client) => {
   console.log('Connected correctly to server');
 
   const db = client.db(dbname);
-  const collection = db.collection('dishes');
 
-  collection.insertOne({"name": "Uthappizza", "description":"test"}, (err, result) => {
-        assert.equal(err, null);
+  dboper.insertDocument(db, { name: "Vadonut", description: 'Test'}, 'dishes',(result) => {
 
-        console.log("After Insert:\n");
-        //result ops -- how many operations have been carried out!
-        console.log(result.ops);
+    console.log('Insert Document:\n', result.ops);
 
-        //find({}) searches everything and converts it to array
-        collection.find({}).toArray((err, docs) => {
-            assert.equal(err, null);
+    dboper.findDocuments(db, 'dishes', (docs) => {
+      console.log('Found Documents:\n',docs);
 
-            console.log("Found:\n");
-            //docs will return all the documents with the criteria that we wanted
-            console.log(docs);
+      dboper.updateDocument(db, {name:'Vadonut'}, {description:'Updated Test'}, 'dishes', (result) => {
 
-            //dropCollection - will remove the dishes from the db 
-            db.dropCollection("dishes", (err, result) => {
-                assert.equal(err, null);
 
-                client.close();
-            });
+        console.log('Updated Document:\n', result.result);
+
+        dboper.findDocuments(db, 'dishes', (docs) => {
+          console.log('Found Documents:\n',docs);
+
+          db.dropCollection('dishes', (result) => {
+              console.log('Dropped Collection: ', result);
+
+              client.close();
+          });
         });
+      });
     });
-
+  });
 });
