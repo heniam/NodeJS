@@ -11,8 +11,7 @@ MongoClient.connect(url).then((client) => {
     console.log('Connected correctly to server');
     const db = client.db(dbname);
 
-    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
-        "dishes")
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},"dishes")
         .then((result) => {
             console.log("Insert Document:\n", result.ops);
 
