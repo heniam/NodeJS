@@ -6,36 +6,41 @@ const dbname = 'conFusion';
 
 const dboper = require('./operations');
 
-MongoClient.connect(url,(err, client) => {
+MongoClient.connect(url).then((client) => {
 
-  assert.equal(err, null);
+    console.log('Connected correctly to server');
+    const db = client.db(dbname);
 
-  console.log('Connected correctly to server');
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
+        "dishes")
+        .then((result) => {
+            console.log("Insert Document:\n", result.ops);
 
-  const db = client.db(dbname);
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
+            console.log("Found Documents:\n", docs);
 
-  dboper.insertDocument(db, { name: "Vadonut", description: 'Test'}, 'dishes',(result) => {
+            return dboper.updateDocument(db, { name: "Vadonut" },
+                    { description: "Updated Test" }, "dishes");
 
-    console.log('Insert Document:\n', result.ops);
+        })
+        .then((result) => {
+            console.log("Updated Document:\n", result.result);
 
-    dboper.findDocuments(db, 'dishes', (docs) => {
-      console.log('Found Documents:\n',docs);
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
+            console.log("Found Updated Documents:\n", docs);
 
-      dboper.updateDocument(db, {name:'Vadonut'}, {description:'Updated Test'}, 'dishes', (result) => {
+            return db.dropCollection("dishes");
+        })
+        .then((result) => {
+            console.log("Dropped Collection: ", result);
 
+            return client.close();
+        })
+        .catch((err) => console.log(err));
 
-        console.log('Updated Document:\n', result.result);
-
-        dboper.findDocuments(db, 'dishes', (docs) => {
-          console.log('Found Documents:\n',docs);
-
-          db.dropCollection('dishes', (result) => {
-              console.log('Dropped Collection: ', result);
-
-              client.close();
-          });
-        });
-      });
-    });
-  });
-});
+})
+.catch((err) => console.log(err));
