@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 require('mongoose-currency').loadType(mongoose);
-const Currency = mongoose.Types.Currency;
+var Currency = mongoose.Types.Currency;
 
-const leaderSchema = new Schema({
+var leaderSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -33,6 +33,6 @@ const leaderSchema = new Schema({
 }, {
     timestamps: true
 });
-const Leaders = mongoose.model('Leader', leaderSchema);
+var Leaders = mongoose.model('Leader', leaderSchema);
 
 module.exports = Leaders;
