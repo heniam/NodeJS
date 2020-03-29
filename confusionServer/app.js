@@ -19,6 +19,7 @@ var passport = require('passport');
 var authenticate = require('./authenticate');
 var config = require('./config');
 
+
 const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes');
@@ -37,6 +38,8 @@ connect.then((db) => {
 
 
 var app = express();
+
+
 
 app.all('*', (req, res, next) => {
   if(req.secure){
@@ -73,6 +76,7 @@ app.use('/leaders',leaderRouter);
 app.use('/imageUpload',uploadRouter);
 app.use('/favorites',favoriteRouter);
 app.use('/comments',commentRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
